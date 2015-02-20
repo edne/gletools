@@ -12,7 +12,7 @@ from ctypes import c_char_p, pointer, cast, byref, c_char, create_string_buffer,
 from gletools.gl import *
 from .util import Context
 
-__all__ = 'VertexShader', 'FragmentShader', 'ShaderProgram'
+__all__ = 'VertexShader', 'FragmentShader', 'ShaderProgram', 'Sampler2D', 'Mat4'
 
 class GLObject(object):
     _del = glDeleteObjectARB

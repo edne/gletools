@@ -13,7 +13,7 @@ from contextlib import nested
 from gletools.gl import *
 from .util import Context
 
-__all__ = ['DepthBuffer']
+__all__ = ['Depthbuffer']
 
 class Depthbuffer(Context):
     _get = GL_RENDERBUFFER_BINDING_EXT
