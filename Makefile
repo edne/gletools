@@ -10,7 +10,6 @@ test:
 		PYTHONPATH=.. $(PYTHON) $$example; \
 	done
 	cd examples/blur && PYTHONPATH=../.. $(PYTHON) app.py
-	cd examples/environment_texture && PYTHONPATH=../.. $(PYTHON) main.py
 	cd examples/game_of_life && PYTHONPATH=../.. $(PYTHON) app.py
 	cd examples/ripples && PYTHONPATH=../.. $(PYTHON) main.py
 

@@ -9,15 +9,8 @@ from __future__ import with_statement
 from __future__ import absolute_import
 
 import gletools.gl as gl
-from .util import Context, DependencyException
-from six.moves import map
+from .util import Context
 from six.moves import range
-
-try:
-    import Image
-    has_pil = True
-except:
-    has_pil = False
 
 __all__ = ['Texture']
 
@@ -144,42 +137,6 @@ class Texture(Context):
 
         self.update()
         self.display = self.make_display()
-
-    @classmethod
-    def open(cls, filename,
-             format=gl.GL_RGBA, filter=gl.GL_LINEAR,
-             unit=gl.GL_TEXTURE0):
-        if not has_pil:
-            raise DependencyException('PIL is requried to open image files')
-        spec = cls.specs[format]
-        pil_format = getattr(spec, 'pil', None)
-        if not pil_format:
-            raise Exception('cannot load')
-        image = Image.open(filename)
-        image = image.convert(pil_format)
-        width, height = image.size
-        data = image.tostring()
-
-        if spec.type == cls.gl_float:
-            data = [ord(x)/255.0 for x in data]
-        else:
-            data = list(map(ord, data))
-
-        return cls(width, height,
-                   format=format, filter=filter,
-                   unit=unit, data=data)
-
-    def save(self, filename):
-        image = Image.new('RGB', (self.width, self.height))
-        if self.spec.type == self.gl_byte:
-            image.putdata(self)
-        else:
-            def convert(pixel):
-                r, g, b = pixel
-                return int(r*255), int(g*255), int(b*255)
-            data = list(map(convert, self))
-            image.putdata(data)
-        image.save(filename)
 
     def make_display(self):
         uvs = 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0
