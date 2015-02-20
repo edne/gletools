@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import pyglet.gl as gl
 import pyglet.gl.glext_arb as glext_arb
 

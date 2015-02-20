@@ -6,6 +6,7 @@
 """
 
 from __future__ import with_statement
+from __future__ import absolute_import
 
 from ctypes import c_char_p, cast, byref, c_char, create_string_buffer, c_float
 
@@ -150,7 +151,7 @@ class ShaderProgram(GLObject, Context):
         self.link()
 
         self.vars = Vars(self)
-        for name, value in variables.items():
+        for name, value in list(variables.items()):
             setattr(self.vars, name, value)
 
     def link(self):

@@ -6,9 +6,12 @@
 """
 
 from __future__ import with_statement
+from __future__ import absolute_import
 
 import gletools.gl as gl
 from .util import Context, DependencyException
+from six.moves import map
+from six.moves import range
 
 try:
     import Image
@@ -158,9 +161,9 @@ class Texture(Context):
         data = image.tostring()
 
         if spec.type == cls.gl_float:
-            data = map(lambda x: ord(x)/255.0, data)
+            data = [ord(x)/255.0 for x in data]
         else:
-            data = map(ord, data)
+            data = list(map(ord, data))
 
         return cls(width, height,
                    format=format, filter=filter,
@@ -174,7 +177,7 @@ class Texture(Context):
             def convert(pixel):
                 r, g, b = pixel
                 return int(r*255), int(g*255), int(b*255)
-            data = map(convert, self)
+            data = list(map(convert, self))
             image.putdata(data)
         image.save(filename)
 
@@ -233,7 +236,8 @@ class Texture(Context):
     def retrieve(self):
         self.get_data(self.buffer)
 
-    def __getitem__(self, (x, y)):
+    def __getitem__(self, xxx_todo_changeme):
+        (x, y) = xxx_todo_changeme
         x, y = x % self.width, y % self.height
 
         channels = self.spec.channels.count
@@ -244,7 +248,8 @@ class Texture(Context):
             end = pos + channels
             return self.buffer[pos:end]
 
-    def __setitem__(self, (x, y), value):
+    def __setitem__(self, xxx_todo_changeme1, value):
+        (x, y) = xxx_todo_changeme1
         x, y = x % self.width, y % self.height
 
         channels = self.spec.channels.count
