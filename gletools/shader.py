@@ -78,7 +78,7 @@ class FragmentShader(Shader):
 class Variable(object):
     def set(self, program, name):
         with program:
-            location = program.uniform_location(name.encode('ascii'))
+            location = program.uniform_location(name)
             if location != -1:
                 self.do_set(location)
 
@@ -121,7 +121,7 @@ class Vars(object):
 
     def __setattr__(self, name, value):
         if isinstance(value, Variable):
-            value.set(self._program, name.encode('ascii'))
+            value.set(self._program, name)
         elif isinstance(value, (tuple, list)):
             setter = typemap[type(value[0])][len(value)]
             with self._program:
@@ -131,7 +131,7 @@ class Vars(object):
         elif isinstance(value, (int, float)):
             setter = typemap[type(value)][1]
             with self._program:
-                location = self._program.uniform_location(name.encode('ascii'))
+                location = self._program.uniform_location(name)
                 if location != -1:
                     setter(location, value)
 

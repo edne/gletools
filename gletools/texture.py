@@ -9,6 +9,7 @@ from __future__ import with_statement
 from __future__ import absolute_import
 
 import gletools.gl as gl
+from ctypes import byref
 from .util import Context
 from six.moves import range
 
@@ -129,7 +130,7 @@ class Texture(Context):
         self.buffer_type = spec.type.obj * (width*height * spec.channels.count)
         id = self.id = gl.GLuint()
 
-        gl.glGenTextures(1, gl.byref(id))
+        gl.glGenTextures(1, byref(id))
         if data:
             self.buffer = self.buffer_type(*data)
         else:
