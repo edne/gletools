@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 import re
+from six.moves import map
 
 class LifParser(object):
     meta = re.compile(r'#(Life|D)')
@@ -41,7 +43,7 @@ class LifParser(object):
             elif type == cls.rule:
                 ruleset = groups[0]
             elif type == cls.pattern:
-                x, y = map(int, groups)
+                x, y = list(map(int, groups))
                 pattern = cls.parse_pattern(lines)
                 patterns.append((x,y,pattern))
         return ruleset, patterns

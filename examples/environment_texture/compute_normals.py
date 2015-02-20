@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from six.moves import map
 class Vector(object):
     def __init__(self, x, y, z):
         self.x = float(x)

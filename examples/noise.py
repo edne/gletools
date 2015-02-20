@@ -1,9 +1,11 @@
 from __future__ import with_statement
+from __future__ import absolute_import
 from contextlib import nested
 
 import pyglet
 from gletools import ShaderProgram, FragmentShader, Texture, Framebuffer, Projection, Screen
 from gletools.gl import *
+from six.moves import range
 
 window = pyglet.window.Window()
 texture = Texture(256, 256, filter=GL_LINEAR)
@@ -27,7 +29,7 @@ program = ShaderProgram(
     }''')
 )
 from random import random
-program.vars.seed_vector = [random() for _ in xrange(3)]
+program.vars.seed_vector = [random() for _ in range(3)]
 rotation = 0.0
 
 def quad(min=0.0, max=1.0):
@@ -51,7 +53,7 @@ pyglet.clock.schedule(simulate, 0.03)
 @window.event
 def on_draw():
     window.clear()
-    program.vars.seed_vector = [random() for _ in xrange(3)]
+    program.vars.seed_vector = [random() for _ in range(3)]
     with nested(framebuffer, program, screen):
         quad(0.0, texture.width)
   

@@ -7,6 +7,7 @@
     :license: GNU AGPL v3 or later, see LICENSE for more details.
 """
 from __future__ import with_statement
+from __future__ import absolute_import
 from contextlib import nested
 import random
 
