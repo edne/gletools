@@ -1,6 +1,5 @@
 from __future__ import with_statement
 from __future__ import absolute_import
-from contextlib import nested
 
 import pyglet
 from gletools import Texture, Projection, DepthTest, SphereMapping, Matrix
@@ -47,6 +46,12 @@ class Bunny(object):
 pyglet.clock.schedule(simulate, 0.03)
 bunny = Bunny()
     
+try:
+    from past import autotranslate
+    autotranslate(['contextlib'])
+except ImportError:
+    pass
+from contextlib import nested
 @window.event
 def on_draw():
     window.clear()

@@ -1,6 +1,5 @@
 from __future__ import with_statement
 from __future__ import absolute_import
-from contextlib import nested
 
 import pyglet
 from gletools import ShaderProgram, FragmentShader, Texture, Framebuffer, Projection, Screen
@@ -44,10 +43,10 @@ pyglet.clock.schedule(simulate, 0.03)
 @window.event
 def on_draw():
     window.clear()
-    with nested(framebuffer, program, screen):
+    with framebuffer, program, screen:
         quad(0.0, texture.width)
    
-    with nested(texture, projection):
+    with texture, projection:
         glPushMatrix()
         glTranslatef(0, 0, -3)
         glRotatef(-45, 1, 0, 0)

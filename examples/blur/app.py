@@ -1,6 +1,5 @@
 from __future__ import with_statement
 from __future__ import absolute_import
-from contextlib import nested
 
 import pyglet
 from gletools import (
@@ -91,18 +90,18 @@ def on_draw():
         glRotatef(rotation, 0.0, 0.0, 1.0)
 
         framebuffer.drawto = GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT
-        with nested(framebuffer, depth):
+        with framebuffer, depth:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
             glColor3f(0.0, 1.0, 0.0)
             quad(left=-1, right=1, top=1, bottom=-1)
 
         framebuffer.drawto = [GL_COLOR_ATTACHMENT1_EXT]
-        with nested(framebuffer, blur, framebuffer.textures[2], framebuffer.textures[0]):
+        with framebuffer, blur, framebuffer.textures[2], framebuffer.textures[0]:
             glColor3f(1.0, 1.0, 1.0)
             blur_geom()
         glPopMatrix()
 
-    with nested(framebuffer.textures[1], ortho):
+    with framebuffer.textures[1], ortho:
         glColor4f(1.0, 1.0, 1.0, 1.0)
         quad(left=0, right=window.width, top=window.height, bottom=0)
 

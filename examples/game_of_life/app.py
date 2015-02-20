@@ -4,7 +4,6 @@ from __future__ import absolute_import
 import sys
 import re
 import random
-from contextlib import nested
 
 import pyglet
 from gletools import ShaderProgram, FragmentShader, Texture, Framebuffer, Sampler2D
@@ -48,7 +47,7 @@ def on_draw():
     framebuffer.textures[0] = front
 
     window.clear()
-    with nested(framebuffer, program, back):
+    with framebuffer, program, back:
         quad()
    
     with front:

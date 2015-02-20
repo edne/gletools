@@ -8,7 +8,6 @@
 """
 from __future__ import with_statement
 from __future__ import absolute_import
-from contextlib import nested
 import random
 
 import pyglet
@@ -84,7 +83,7 @@ def on_draw():
     tex2.unit = GL_TEXTURE1
     tex3.unit = GL_TEXTURE2
 
-    with nested(framebuffer, program, tex2, tex3):
+    with framebuffer, program, tex2, tex3:
         quad(left=0, bottom=0, right=window.width, top=window.height)
     with tex1:
         glColor4f(1.0, 1.0, 1.0, 1.0)

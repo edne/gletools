@@ -8,7 +8,8 @@
 from __future__ import with_statement
 from __future__ import absolute_import
 
-from ctypes import c_char_p, cast, byref, c_char, create_string_buffer, c_float
+from ctypes import (c_char_p, c_char, c_float, c_int,
+                    cast, byref, create_string_buffer, POINTER)
 
 import gletools.gl as gl
 from .util import Context
@@ -27,7 +28,7 @@ class GLObject(object):
         pass
 
     def log(self):
-        length = gl.c_int(0)
+        length = c_int(0)
         gl.glGetObjectParameterivARB(self.id,
                                      gl.GL_OBJECT_INFO_LOG_LENGTH_ARB,
                                      byref(length))
@@ -45,12 +46,12 @@ class Shader(GLObject):
             raise self.Exception('%s extension is not available' % self.ext)
         self.id = gl.glCreateShaderObjectARB(self.type)
         self.source = source
-        ptr = cast(c_char_p(source), gl.POINTER(c_char))
+        ptr = cast(c_char_p(source.encode('ascii')), POINTER(c_char))
         gl.glShaderSourceARB(self.id, 1, byref(ptr), None)
 
         gl.glCompileShader(self.id)
 
-        status = gl.c_int(0)
+        status = c_int(0)
         gl.glGetObjectParameterivARB(self.id,
                                      gl.GL_OBJECT_COMPILE_STATUS_ARB,
                                      byref(status))
@@ -60,7 +61,7 @@ class Shader(GLObject):
 
     @classmethod
     def open(cls, name):
-        source = open(name).read()
+        source = open(name.encode('ascii')).read()
         return cls(source)
 
 
@@ -77,7 +78,7 @@ class FragmentShader(Shader):
 class Variable(object):
     def set(self, program, name):
         with program:
-            location = program.uniform_location(name)
+            location = program.uniform_location(name.encode('ascii'))
             if location != -1:
                 self.do_set(location)
 
@@ -120,7 +121,7 @@ class Vars(object):
 
     def __setattr__(self, name, value):
         if isinstance(value, Variable):
-            value.set(self._program, name)
+            value.set(self._program, name.encode('ascii'))
         elif isinstance(value, (tuple, list)):
             setter = typemap[type(value[0])][len(value)]
             with self._program:
@@ -130,7 +131,7 @@ class Vars(object):
         elif isinstance(value, (int, float)):
             setter = typemap[type(value)][1]
             with self._program:
-                location = self._program.uniform_location(name)
+                location = self._program.uniform_location(name.encode('ascii'))
                 if location != -1:
                     setter(location, value)
 
@@ -157,7 +158,7 @@ class ShaderProgram(GLObject, Context):
     def link(self):
         gl.glLinkProgramARB(self.id)
 
-        status = gl.c_int(0)
+        status = c_int(0)
         gl.glGetObjectParameterivARB(self.id,
                                      gl.GL_OBJECT_LINK_STATUS_ARB,
                                      byref(status))
@@ -174,4 +175,4 @@ class ShaderProgram(GLObject, Context):
             raise self.Exception('failed to validate:\n%s' % error)
 
     def uniform_location(self, name):
-        return gl.glGetUniformLocation(self.id, name)
+        return gl.glGetUniformLocation(self.id, name.encode('ascii'))
