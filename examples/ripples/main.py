@@ -16,7 +16,7 @@ from gletools import (
 )
 from gletools.gl import *
 
-window = pyglet.window.Window(fullscreen=True)
+window = pyglet.window.Window(fullscreen=False)
 framebuffer = Framebuffer()
 tex1 = Texture(window.width, window.height, filter=GL_LINEAR, format=GL_RGBA32F)
 tex2 = Texture(window.width, window.height, filter=GL_LINEAR, format=GL_RGBA32F)
