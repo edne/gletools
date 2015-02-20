@@ -1,7 +1,7 @@
 PYTHON=python
 
 
-all: pep8 test
+all: pep8 coverage
 
 
 test:
@@ -13,6 +13,17 @@ test:
 	cd examples/environment_texture && PYTHONPATH=../.. $(PYTHON) main.py
 	cd examples/game_of_life && PYTHONPATH=../.. $(PYTHON) app.py
 	cd examples/ripples && PYTHONPATH=../.. $(PYTHON) main.py
+
+
+coverage:
+	export COVERAGE_FILE=`pwd`/.coverage
+	coverage erase
+	make test \
+		PYTHON="\
+		COVERAGE_FILE=../../.coverage\
+		$(PYTHON) -m\
+		coverage run --source=gletools -a"
+	coverage report
 
 
 pep8:
