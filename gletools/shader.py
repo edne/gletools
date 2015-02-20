@@ -7,57 +7,71 @@
 
 from __future__ import with_statement
 
-from ctypes import c_char_p, pointer, cast, byref, c_char, create_string_buffer, c_float
+from ctypes import c_char_p, cast, byref, c_char, create_string_buffer, c_float
 
-from gletools.gl import *
+import gletools.gl as gl
 from .util import Context
 
-__all__ = 'VertexShader', 'FragmentShader', 'ShaderProgram', 'Sampler2D', 'Mat4'
+__all__ = ['VertexShader',
+           'FragmentShader',
+           'ShaderProgram',
+           'Sampler2D',
+           'Mat4']
+
 
 class GLObject(object):
-    _del = glDeleteObjectARB
-    class Exception(Exception): pass
+    _del = gl.glDeleteObjectARB
+
+    class Exception(Exception):
+        pass
 
     def log(self):
-        length = c_int(0)
-        glGetObjectParameterivARB(self.id, GL_OBJECT_INFO_LOG_LENGTH_ARB, byref(length))
+        length = gl.c_int(0)
+        gl.glGetObjectParameterivARB(self.id,
+                                     gl.GL_OBJECT_INFO_LOG_LENGTH_ARB,
+                                     byref(length))
         log = create_string_buffer(length.value)
-        glGetInfoLogARB(self.id, length.value, None, log)
+        gl.glGetInfoLogARB(self.id, length.value, None, log)
         return log.value
-    
+
     def __del__(self):
         self._del(self.id)
 
-class Shader(GLObject):
-    
-    def __init__(self, source):
-        if not gl_info.have_extension(self.ext):
-            raise self.Exception('%s extension is not available' % self.ext)
-        self.id = glCreateShaderObjectARB(self.type)
-        self.source = source
-        ptr = cast(c_char_p(source), POINTER(c_char))
-        glShaderSourceARB(self.id, 1, byref(ptr), None)
 
-        glCompileShader(self.id)
-        
-        status = c_int(0)
-        glGetObjectParameterivARB(self.id, GL_OBJECT_COMPILE_STATUS_ARB, byref(status))
+class Shader(GLObject):
+    def __init__(self, source):
+        if not gl.gl_info.have_extension(self.ext):
+            raise self.Exception('%s extension is not available' % self.ext)
+        self.id = gl.glCreateShaderObjectARB(self.type)
+        self.source = source
+        ptr = cast(c_char_p(source), gl.POINTER(c_char))
+        gl.glShaderSourceARB(self.id, 1, byref(ptr), None)
+
+        gl.glCompileShader(self.id)
+
+        status = gl.c_int(0)
+        gl.glGetObjectParameterivARB(self.id,
+                                     gl.GL_OBJECT_COMPILE_STATUS_ARB,
+                                     byref(status))
         if status.value == 0:
             error = self.log()
             raise self.Exception('failed to compile:\n%s' % error)
-    
+
     @classmethod
     def open(cls, name):
         source = open(name).read()
         return cls(source)
 
+
 class VertexShader(Shader):
-    type = GL_VERTEX_SHADER_ARB
+    type = gl.GL_VERTEX_SHADER_ARB
     ext = 'GL_ARB_vertex_program'
 
+
 class FragmentShader(Shader):
-    type = GL_FRAGMENT_SHADER_ARB
+    type = gl.GL_FRAGMENT_SHADER_ARB
     ext = 'GL_ARB_fragment_program'
+
 
 class Variable(object):
     def set(self, program, name):
@@ -66,32 +80,38 @@ class Variable(object):
             if location != -1:
                 self.do_set(location)
 
+
 class Sampler2D(Variable):
     def __init__(self, unit):
-        self.value = unit - GL_TEXTURE0
+        self.value = unit - gl.GL_TEXTURE0
 
     def do_set(self, location):
-        glUniform1i(location, self.value)
+        gl.glUniform1i(location, self.value)
+
 
 class Mat4(Variable):
     def __init__(self, *values):
         self.values = (c_float*16)(*values)
 
     def do_set(self, location):
-        glUniformMatrix4fv(location, len(self.values), GL_FALSE, self.values)
+        gl.glUniformMatrix4fv(location,
+                              len(self.values),
+                              gl.GL_FALSE,
+                              self.values)
 
 typemap = {
-    float:{
-        1:glUniform1f,
-        2:glUniform2f,
-        3:glUniform3f,
+    float: {
+        1: gl.glUniform1f,
+        2: gl.glUniform2f,
+        3: gl.glUniform3f,
     },
-    int:{
-        1:glUniform1i,
-        2:glUniform2i,
-        3:glUniform3i,
+    int: {
+        1: gl.glUniform1i,
+        2: gl.glUniform2i,
+        3: gl.glUniform3i,
     }
 }
+
 
 class Vars(object):
     def __init__(self, program):
@@ -106,25 +126,26 @@ class Vars(object):
                 location = self._program.uniform_location(name)
                 if location != -1:
                     setter(location, *value)
-        elif isinstance(value, (int, float)): 
+        elif isinstance(value, (int, float)):
             setter = typemap[type(value)][1]
             with self._program:
                 location = self._program.uniform_location(name)
                 if location != -1:
                     setter(location, value)
 
+
 class ShaderProgram(GLObject, Context):
-    _get = GL_CURRENT_PROGRAM
-    
+    _get = gl.GL_CURRENT_PROGRAM
+
     def bind(self, id):
-        glUseProgram(id)
+        gl.glUseProgram(id)
 
     def __init__(self, *shaders, **variables):
         Context.__init__(self)
-        self.id = glCreateProgramObjectARB()
+        self.id = gl.glCreateProgramObjectARB()
         self.shaders = list(shaders)
         for shader in shaders:
-            glAttachObjectARB(self.id, shader.id)
+            gl.glAttachObjectARB(self.id, shader.id)
 
         self.link()
 
@@ -133,20 +154,23 @@ class ShaderProgram(GLObject, Context):
             setattr(self.vars, name, value)
 
     def link(self):
-        glLinkProgramARB(self.id)
-       
-        status = c_int(0)
-        glGetObjectParameterivARB(self.id, GL_OBJECT_LINK_STATUS_ARB, byref(status))
+        gl.glLinkProgramARB(self.id)
+
+        status = gl.c_int(0)
+        gl.glGetObjectParameterivARB(self.id,
+                                     gl.GL_OBJECT_LINK_STATUS_ARB,
+                                     byref(status))
         if status.value == 0:
             error = self.log()
             raise self.Exception('failed to link:\n%s' % error)
 
-        glValidateProgram(self.id)
-        glGetObjectParameterivARB(self.id, GL_VALIDATE_STATUS, byref(status))
+        gl.glValidateProgram(self.id)
+        gl.glGetObjectParameterivARB(self.id,
+                                     gl.GL_VALIDATE_STATUS,
+                                     byref(status))
         if status.value == 0:
             error = self.log()
             raise self.Exception('failed to validate:\n%s' % error)
 
-    
     def uniform_location(self, name):
-        return glGetUniformLocation(self.id, name)
+        return gl.glGetUniformLocation(self.id, name)
