@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-    :copyright: 2009 by Florian Boesch <pyalot@gmail.com>.
-    :license: GNU AGPL v3 or later, see LICENSE for more details.
-"""
-
-from __future__ import with_statement
-from __future__ import absolute_import
-
 import gletools.gl as gl
 from ctypes import byref
 from .util import Context
@@ -15,17 +7,7 @@ from .util import Context
 __all__ = ['Texture']
 
 
-class Object(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
-
 class Texture(Context):
-    specs = {gl.GL_RGBA: Object(type=Object(obj=gl.GLubyte,
-                                            enum=gl.GL_UNSIGNED_BYTE),
-                                channels=Object(enum=gl.GL_RGBA,
-                                                count=4))}
-
     target = gl.GL_TEXTURE_2D
 
     _get = gl.GL_TEXTURE_BINDING_2D
@@ -43,42 +25,32 @@ class Texture(Context):
 
     def __init__(self,
                  width, height,
-                 format=gl.GL_RGBA, filter=gl.GL_LINEAR,
                  unit=gl.GL_TEXTURE0, data=None):
         Context.__init__(self)
         self.width = width
         self.height = height
-        self.format = gl.GL_RGBA
-        self.filter = gl.GL_LINEAR
         self.unit = unit
-        self.spec = self.specs[gl.GL_RGBA]
         self.buffer_type = gl.GLubyte * (width*height * 4)
         id = self.id = gl.GLuint()
 
         gl.glGenTextures(1, byref(id))
         if data:
-            self.buffer = self.buffer_type(*data)
+            __buffer = self.buffer_type(*data)  # used only in scribble
         else:
-            self.buffer = self.buffer_type()
+            __buffer = self.buffer_type()
 
-        self.update()
-
-    def set_data(self, data):
         with self:
             gl.glTexParameteri(self.target,
                                gl.GL_TEXTURE_MIN_FILTER,
-                               self.filter)
+                               gl.GL_LINEAR)
             gl.glTexParameteri(self.target,
                                gl.GL_TEXTURE_MAG_FILTER,
-                               self.filter)
+                               gl.GL_LINEAR)
             gl.glTexImage2D(
-                self.target, 0, self.format,
+                self.target, 0, gl.GL_RGBA,
                 self.width, self.height,
                 0,
-                self.spec.channels.enum, self.spec.type.enum,
-                data,
+                gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
+                __buffer,
             )
             gl.glFlush()
-
-    def update(self):
-        self.set_data(self.buffer)

@@ -6,7 +6,7 @@ from gletools import ShaderProgram, FragmentShader, Texture, Framebuffer, Projec
 from gletools.gl import *
 
 window = pyglet.window.Window()
-texture = Texture(64, 64, filter=GL_LINEAR)
+texture = Texture(64, 64)
 screen = Screen(0, 0, texture.width, texture.height)
 projection = Projection(0, 0, window.width, window.height)
 framebuffer = Framebuffer(texture)

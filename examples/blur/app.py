@@ -12,9 +12,9 @@ from gletools.gl import *
 window = pyglet.window.Window()
 
 framebuffer = Framebuffer(
-    Texture(window.width, window.height, filter=GL_LINEAR),
-    Texture(window.width, window.height, filter=GL_LINEAR),
-    Texture(window.width, window.height, filter=GL_LINEAR, unit=GL_TEXTURE1),
+    Texture(window.width, window.height),
+    Texture(window.width, window.height),
+    Texture(window.width, window.height, unit=GL_TEXTURE1),
 )
 framebuffer.depth(Depthbuffer(window.width, window.height))
 

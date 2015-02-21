@@ -7,7 +7,7 @@ from gletools.gl import *
 from six.moves import range
 
 window = pyglet.window.Window()
-texture = Texture(256, 256, filter=GL_LINEAR)
+texture = Texture(256, 256)
 framebuffer = Framebuffer(texture)
 screen = Screen(0, 0, texture.width, texture.height)
 projection = Projection(0, 0, window.width, window.height)
