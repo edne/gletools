@@ -17,11 +17,7 @@ __all__ = ['get',
            'Group',
            'interval',
            'quad',
-           'Matrix',
-           'DependencyException',
-           'DepthTest',
-           'SphereMapping',
-           'Lighting']
+           'Matrix']
 
 _get_type_map = {
     int: (gl.GLint, gl.glGetIntegerv),
@@ -87,42 +83,6 @@ class MatrixMode(object):
         gl.glMatrixMode(self.mode)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        gl.glPopAttrib()
-
-
-class SphereMapping(object):
-    @staticmethod
-    def __enter__():
-        gl.glPushAttrib(gl.GL_ENABLE_BIT | gl.GL_TEXTURE_BIT)
-        gl.glTexGeni(gl.GL_S, gl.GL_TEXTURE_GEN_MODE, gl.GL_SPHERE_MAP)
-        gl.glTexGeni(gl.GL_T, gl.GL_TEXTURE_GEN_MODE, gl.GL_SPHERE_MAP)
-        gl.glEnable(gl.GL_TEXTURE_GEN_S)
-        gl.glEnable(gl.GL_TEXTURE_GEN_T)
-
-    @staticmethod
-    def __exit__(exc_type, exc_val, exc_tb):
-        gl.glPopAttrib()
-
-
-class DepthTest(object):
-    @staticmethod
-    def __enter__():
-        gl.glPushAttrib(gl.GL_DEPTH_BUFFER_BIT)
-        gl.glEnable(gl.GL_DEPTH_TEST)
-
-    @staticmethod
-    def __exit__(exc_type, exc_val, exc_tb):
-        gl.glPopAttrib()
-
-
-class Lighting(object):
-    @staticmethod
-    def __enter__():
-        gl.glPushAttrib(gl.GL_LIGHTING_BIT)
-        gl.glEnable(gl.GL_LIGHTING)
-
-    @staticmethod
-    def __exit__(exc_type, exc_val, exc_tb):
         gl.glPopAttrib()
 
 
@@ -236,7 +196,3 @@ def quad(left=-0.5, top=-0.5, right=0.5, bottom=0.5, scale=1.0):
     gl.glTexCoord2f(0.0, 1.0)
     gl.glVertex3f(left, bottom, 0.0)
     gl.glEnd()
-
-
-class DependencyException(Exception):
-    pass
