@@ -17,7 +17,7 @@ framebuffer.textures = [
     Texture(window.width, window.height, filter=GL_LINEAR),
     Texture(window.width, window.height, filter=GL_LINEAR, unit=GL_TEXTURE1),
 ]
-framebuffer.depth = Depthbuffer(window.width, window.height)
+framebuffer.depth(Depthbuffer(window.width, window.height))
 
 depth_shader = VertexShader('''
     varying float depth;
@@ -89,13 +89,13 @@ def on_draw():
         glRotatef(-45, 1, 0, 0)
         glRotatef(rotation, 0.0, 0.0, 1.0)
 
-        framebuffer.drawto = GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT
+        framebuffer.drawto(GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT)
         with framebuffer, depth:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
             glColor3f(0.0, 1.0, 0.0)
             quad(left=-1, right=1, top=1, bottom=-1)
 
-        framebuffer.drawto = [GL_COLOR_ATTACHMENT1_EXT]
+        framebuffer.drawto(GL_COLOR_ATTACHMENT1_EXT)
         with framebuffer, blur, framebuffer.textures[2], framebuffer.textures[0]:
             glColor3f(1.0, 1.0, 1.0)
             blur_geom()
