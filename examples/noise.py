@@ -8,8 +8,7 @@ from six.moves import range
 
 window = pyglet.window.Window()
 texture = Texture(256, 256, filter=GL_LINEAR)
-framebuffer = Framebuffer()
-framebuffer.textures[0] = texture
+framebuffer = Framebuffer(texture)
 screen = Screen(0, 0, texture.width, texture.height)
 projection = Projection(0, 0, window.width, window.height)
 program = ShaderProgram(

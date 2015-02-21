@@ -9,8 +9,7 @@ window = pyglet.window.Window()
 texture = Texture(64, 64, filter=GL_LINEAR)
 screen = Screen(0, 0, texture.width, texture.height)
 projection = Projection(0, 0, window.width, window.height)
-framebuffer = Framebuffer()
-framebuffer.textures[0] = texture
+framebuffer = Framebuffer(texture)
 program = ShaderProgram(
     FragmentShader('''
     uniform float size;

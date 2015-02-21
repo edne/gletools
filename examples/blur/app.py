@@ -11,12 +11,11 @@ from gletools.gl import *
 
 window = pyglet.window.Window()
 
-framebuffer = Framebuffer()
-framebuffer.textures = [
+framebuffer = Framebuffer(
     Texture(window.width, window.height, filter=GL_LINEAR),
     Texture(window.width, window.height, filter=GL_LINEAR),
     Texture(window.width, window.height, filter=GL_LINEAR, unit=GL_TEXTURE1),
-]
+)
 framebuffer.depth(Depthbuffer(window.width, window.height))
 
 depth_shader = VertexShader('''

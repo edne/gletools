@@ -78,7 +78,7 @@ pyglet.clock.schedule(lambda delta: None)
 def on_draw():
     global tex1, tex2, tex3
     window.clear()
-    framebuffer.textures[0] = tex1
+    framebuffer.setTextures(tex1)
     tex1.unit = GL_TEXTURE0
     tex2.unit = GL_TEXTURE1
     tex3.unit = GL_TEXTURE2
