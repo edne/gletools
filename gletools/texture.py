@@ -11,7 +11,6 @@ from __future__ import absolute_import
 import gletools.gl as gl
 from ctypes import byref
 from .util import Context
-from six.moves import range
 
 __all__ = ['Texture']
 
@@ -190,39 +189,3 @@ class Texture(Context):
 
     def update(self):
         self.set_data(self.buffer)
-
-    def retrieve(self):
-        self.get_data(self.buffer)
-
-    def __getitem__(self, xxx_todo_changeme):
-        (x, y) = xxx_todo_changeme
-        x, y = x % self.width, y % self.height
-
-        channels = self.spec.channels.count
-        pos = (x + y * self.width) * channels
-        if channels == 1:
-            return self.buffer[pos]
-        else:
-            end = pos + channels
-            return self.buffer[pos:end]
-
-    def __setitem__(self, xxx_todo_changeme1, value):
-        (x, y) = xxx_todo_changeme1
-        x, y = x % self.width, y % self.height
-
-        channels = self.spec.channels.count
-        pos = (x + y * self.width) * channels
-        if channels == 1:
-            self.buffer[pos] = value
-        else:
-            end = pos + channels
-            self.buffer[pos:end] = value
-
-    def __iter__(self):
-        channels = self.spec.channels.count
-        if channels == 1:
-            for value in self.buffer:
-                yield value
-        else:
-            for i in range(0, len(self.buffer), channels):
-                yield self.buffer[i:i+channels]
