@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-    :copyright: 2009 by Florian Boesch <pyalot@gmail.com>.
-    :license: GNU AGPL v3 or later, see LICENSE for more details.
-"""
-
-from __future__ import with_statement
-from __future__ import absolute_import
-
-from ctypes import (c_char_p, c_char, c_float, c_int,
+from ctypes import (c_char_p, c_char, c_int,
                     cast, byref, create_string_buffer, POINTER)
 
 import gletools.gl as gl
@@ -17,8 +9,7 @@ from .util import Context
 __all__ = ['VertexShader',
            'FragmentShader',
            'ShaderProgram',
-           'Sampler2D',
-           'Mat4']
+           'Sampler2D']
 
 
 class GLObject(object):
@@ -90,16 +81,6 @@ class Sampler2D(Variable):
     def do_set(self, location):
         gl.glUniform1i(location, self.value)
 
-
-class Mat4(Variable):
-    def __init__(self, *values):
-        self.values = (c_float*16)(*values)
-
-    def do_set(self, location):
-        gl.glUniformMatrix4fv(location,
-                              len(self.values),
-                              gl.GL_FALSE,
-                              self.values)
 
 typemap = {
     float: {
