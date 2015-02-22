@@ -5,9 +5,33 @@ from __future__ import absolute_import
 import pyglet
 from gletools import (
     Projection, Framebuffer, Texture,
-    interval, quad, Group, Matrix,
 )
 from gletools.gl import *
+
+class Matrix(object):
+    @staticmethod
+    def __enter__():
+        glPushMatrix()
+
+    @staticmethod
+    def __exit__(exc_type, exc_val, exc_tb):
+        glPopMatrix()
+
+
+class Group(object):
+    def __init__(self, *members, **named_members):
+        self.__dict__.update(named_members)
+        self._members = list(members) + list(named_members.values())
+
+    def __enter__(self):
+        for member in self._members:
+            member.__enter__()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for member in reversed(self._members):
+            member.__exit__(exc_type, exc_val, exc_tb)
+
+
 
 window = pyglet.window.Window()
 projection = Projection(0, 0, window.width, window.height)
@@ -28,12 +52,38 @@ def on_mouse_drag(x, y, rx, ry, button, modifier):
             glVertex3f(x-rx, y-ry, 0)
             glEnd()
 
+
+def interval(time):
+    def _interval(fun):
+        pyglet.clock.schedule_interval(fun, time)
+        return fun
+    return _interval
+
+
 rotation = 0.0
 @interval(0.03)
 def simulate(delta):
     global rotation
     rotation += 40.0 * delta
-    
+
+ 
+def quad(left=-0.5, top=-0.5, right=0.5, bottom=0.5, scale=1.0):
+    left *= scale
+    right *= scale
+    top *= scale
+    bottom *= scale
+    gl.glBegin(gl.GL_QUADS)
+    gl.glTexCoord2f(1.0, 1.0)
+    gl.glVertex3f(right, bottom, 0.0)
+    gl.glTexCoord2f(1.0, 0.0)
+    gl.glVertex3f(right, top, 0.0)
+    gl.glTexCoord2f(0.0, 0.0)
+    gl.glVertex3f(left, top, 0.0)
+    gl.glTexCoord2f(0.0, 1.0)
+    gl.glVertex3f(left, bottom, 0.0)
+    gl.glEnd()   
+
+
 @window.event
 def on_draw():
     window.clear()

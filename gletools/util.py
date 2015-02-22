@@ -11,13 +11,7 @@ import gletools.gl as gl
 
 __all__ = ['get',
            'Projection',
-           'Screen',
-           'Ortho',
-           'Viewport',
-           'Group',
-           'interval',
-           'quad',
-           'Matrix']
+           'Screen']
 
 _get_type_map = {
     int: (gl.GLint, gl.glGetIntegerv),
@@ -25,14 +19,10 @@ _get_type_map = {
 }
 
 
-def get(enum, size=1, type=int):
-    type, accessor = _get_type_map[type]
-    values = (type*size)()
-    accessor(enum, values)
-    if size == 1:
-        return values[0]
-    else:
-        return values[:]
+def get(enum):
+    values = (gl.GLint*1)()
+    gl.glGetIntegerv(enum, values)
+    return values[0]
 
 
 class Context(object):
@@ -60,20 +50,6 @@ class Context(object):
         pass
 
 
-class Group(object):
-    def __init__(self, *members, **named_members):
-        self.__dict__.update(named_members)
-        self._members = list(members) + list(named_members.values())
-
-    def __enter__(self):
-        for member in self._members:
-            member.__enter__()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        for member in reversed(self._members):
-            member.__exit__(exc_type, exc_val, exc_tb)
-
-
 class MatrixMode(object):
     def __init__(self, mode):
         self.mode = mode
@@ -84,16 +60,6 @@ class MatrixMode(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         gl.glPopAttrib()
-
-
-class Matrix(object):
-    @staticmethod
-    def __enter__():
-        gl.glPushMatrix()
-
-    @staticmethod
-    def __exit__(exc_type, exc_val, exc_tb):
-        gl.glPopMatrix()
 
 
 class Projection(object):
@@ -121,19 +87,6 @@ class Projection(object):
         gl.glPopAttrib()
 
 
-class Viewport(object):
-    def __init__(self, x, y, width, height):
-        self.x, self.y = x, y
-        self.width, self.height = width, height
-
-    def __enter__(self):
-        gl.glPushAttrib(gl.GL_VIEWPORT_BIT)
-        gl.glViewport(self.x, self.y, self.width, self.height)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        gl.glPopAttrib()
-
-
 class Screen(object):
     def __init__(self, x, y, width, height):
         self.x, self.y = x, y
@@ -153,46 +106,3 @@ class Screen(object):
             gl.glPopMatrix()
 
         gl.glPopAttrib()
-
-
-class Ortho(object):
-    def __init__(self, left, right, top, bottom, near, far):
-        self.left, self.right = left, right
-        self.top, self.bottom = top, bottom
-        self.near, self.far = near, far
-
-    def __enter__(self):
-        with MatrixMode(gl.GL_PROJECTION):
-            gl.glPushMatrix()
-            gl.glLoadIdentity()
-            gl.glOrtho(self.left, self.right,
-                       self.bottom, self.top,
-                       self.near, self.far)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        with MatrixMode(gl.GL_PROJECTION):
-            gl.glPopMatrix()
-
-
-def interval(time):
-    def _interval(fun):
-        gl.pyglet.clock.schedule_interval(fun, time)
-        return fun
-    return _interval
-
-
-def quad(left=-0.5, top=-0.5, right=0.5, bottom=0.5, scale=1.0):
-    left *= scale
-    right *= scale
-    top *= scale
-    bottom *= scale
-    gl.glBegin(gl.GL_QUADS)
-    gl.glTexCoord2f(1.0, 1.0)
-    gl.glVertex3f(right, bottom, 0.0)
-    gl.glTexCoord2f(1.0, 0.0)
-    gl.glVertex3f(right, top, 0.0)
-    gl.glTexCoord2f(0.0, 0.0)
-    gl.glVertex3f(left, top, 0.0)
-    gl.glTexCoord2f(0.0, 1.0)
-    gl.glVertex3f(left, bottom, 0.0)
-    gl.glEnd()
