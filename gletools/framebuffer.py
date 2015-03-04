@@ -23,7 +23,6 @@ class Framebuffer(object):
         if not gl.gl_info.have_extension('GL_EXT_framebuffer_object'):
             raise Exception('framebuffer object extension not available')
 
-        # Context.__init__(self)
         self.stack = list()
         self.textures = [None] * getIntegerv(gl.GL_MAX_COLOR_ATTACHMENTS_EXT)
 
@@ -63,3 +62,9 @@ class Framebuffer(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         id = self.stack.pop(-1)
         self.bind(id)
+
+    def __call__(self, f):
+        def g(*args, **kwargs):
+            with self:
+                f(*args, **kwargs)
+        return g
