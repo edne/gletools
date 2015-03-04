@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from ctypes import byref
+import pyglet.gl as gl
 
-
-import gletools.gl as gl
-from .util import Context, get
 
 __all__ = ['Framebuffer']
 
 
-class Framebuffer(Context):
+def getIntegerv(enum):
+    values = (gl.GLint*1)()
+    gl.glGetIntegerv(enum, values)
+    return values[0]
+
+
+class Framebuffer(object):
     _get = gl.GL_FRAMEBUFFER_BINDING_EXT
 
     def bind(self, id):
@@ -19,14 +23,15 @@ class Framebuffer(Context):
         if not gl.gl_info.have_extension('GL_EXT_framebuffer_object'):
             raise Exception('framebuffer object extension not available')
 
-        Context.__init__(self)
-        self.textures = [None] * get(gl.GL_MAX_COLOR_ATTACHMENTS_EXT)
+        # Context.__init__(self)
+        self.stack = list()
+        self.textures = [None] * getIntegerv(gl.GL_MAX_COLOR_ATTACHMENTS_EXT)
 
         id = gl.GLuint()
         gl.glGenFramebuffersEXT(1, byref(id))
         self.id = id.value
 
-        self.textures = [None] * get(gl.GL_MAX_COLOR_ATTACHMENTS_EXT)
+        self.textures = [None] * getIntegerv(gl.GL_MAX_COLOR_ATTACHMENTS_EXT)
         self.setTextures(*textures)
 
     def setTextures(self, *textures):
@@ -50,3 +55,11 @@ class Framebuffer(Context):
         with self:
             buffers = (gl.GLenum * len(enums))(*enums)
             gl.glDrawBuffers(len(enums), buffers)
+
+    def __enter__(self):
+        self.stack.append(getIntegerv(self._get))
+        self.bind(self.id)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        id = self.stack.pop(-1)
+        self.bind(id)
