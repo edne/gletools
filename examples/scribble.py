@@ -41,16 +41,22 @@ fbo = Framebuffer(
     )
 )
 
+
+@fbo
+def line(x0, y0, x1, y1):
+    glBegin(GL_LINES)
+    glVertex3f(x0, y0, 0)
+    glVertex3f(x1, y1, 0)
+    glEnd()
+
+
 @window.event
 def on_mouse_drag(x, y, rx, ry, button, modifier):
     if pyglet.window.mouse.LEFT == button:
         glColor4f(1,1,1,1)
         glLineWidth(3)
-        with fbo:
-            glBegin(GL_LINES)
-            glVertex3f(x, y, 0)
-            glVertex3f(x-rx, y-ry, 0)
-            glEnd()
+        line(x, y, x-rx, y-ry)
+
 
 
 def interval(time):
