@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import pyglet
 from gletools import (
     ShaderProgram, VertexShader, FragmentShader,
-    Texture, Framebuffer, Depthbuffer, Sampler2D,
+    Texture, Framebuffer, Sampler2D,
     Projection, Screen, 
 )
 from gletools.gl import *
@@ -16,7 +16,6 @@ framebuffer = Framebuffer(
     Texture(window.width, window.height),
     Texture(window.width, window.height, unit=GL_TEXTURE1),
 )
-framebuffer.depth(Depthbuffer(window.width, window.height))
 
 depth_shader = VertexShader('''
     varying float depth;

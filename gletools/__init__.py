@@ -8,10 +8,9 @@ from __future__ import absolute_import
 
 from . import framebuffer
 from . import texture
-from . import depthbuffer
 from . import shader
 from . import util
 
-for module in [framebuffer, texture, depthbuffer, shader, util]:
+for module in [framebuffer, texture, shader, util]:
     locals().update({name: getattr(module, name)
                      for name in module.__all__})
