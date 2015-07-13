@@ -1,22 +1,17 @@
 import pyglet
-from gletools import Texture, Framebuffer, Projection
+from gletools import Texture, Framebuffer
 from gletools.gl import *
 
 window = pyglet.window.Window()
-projection = Projection(0, 0, window.width, window.height)
 
 
 def quad(min=0.0, max=1.0):
     glBegin(GL_QUADS)
-    # glTexCoord2f(1.0, 1.0)
     glColor3f(0, 1, 1)
     glVertex3f(max, max, 0.0)
-    # glTexCoord2f(1.0, 0.0)
     glVertex3f(max, min, 0.0)
-    # glTexCoord2f(0.0, 0.0)
     glColor3f(1, 1, 0)
     glVertex3f(min, min, 0.0)
-    # glTexCoord2f(0.0, 1.0)
     glVertex3f(min, max, 0.0)
     glEnd()
 
