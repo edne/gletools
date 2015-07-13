@@ -29,6 +29,7 @@ program.vars.resolution = float(window.width), float(window.height)
 program.vars.tex2 = Sampler2D(GL_TEXTURE1)
 program.vars.tex3 = Sampler2D(GL_TEXTURE2)
 
+
 def quad(left, right, top, bottom):
     glBegin(GL_QUADS)
     glTexCoord2f(1.0, 1.0)
@@ -41,15 +42,17 @@ def quad(left, right, top, bottom):
     glVertex3f(left, top, 0.0)
     glEnd()
 
+
 @window.event
-def on_mouse_motion(x,y,rx,ry):
+def on_mouse_motion(x, y, rx, ry):
     with framebuffer:
         glColor4f(0.0, 1.5, 3.0, 1.0)
         glLineWidth(1.0)
         glBegin(GL_LINES)
         glVertex3f(x, y, 0)
-        glVertex3f(x+rx, y+ry, 0)
+        glVertex3f(x + rx, y + ry, 0)
         glEnd()
+
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
@@ -60,12 +63,13 @@ def on_mouse_press(x, y, button, modifiers):
         glVertex3f(x, y, 0)
         glEnd()
 
+
 def rain(delta):
     x = random.randint(0, window.width)
     y = random.randint(0, window.height)
     size = random.random() * 3
     with framebuffer:
-        glColor4f(0.0, size/2, size, 1.0)
+        glColor4f(0.0, size / 2, size, 1.0)
         glPointSize(size)
         glBegin(GL_POINTS)
         glVertex3f(x, y, 0)
@@ -73,6 +77,7 @@ def rain(delta):
 
 pyglet.clock.schedule_interval(rain, 0.2)
 pyglet.clock.schedule(lambda delta: None)
+
 
 @window.event
 def on_draw():
@@ -88,10 +93,10 @@ def on_draw():
     with tex1:
         glColor4f(1.0, 1.0, 1.0, 1.0)
         quad(left=0, bottom=0, right=window.width, top=window.height)
-    
+
     tex1, tex2, tex3 = tex2, tex3, tex1
 
-if __name__=='__main__':
+if __name__ == '__main__':
     glEnable(GL_POINT_SMOOTH)
     glEnable(GL_LINE_SMOOTH)
     if gl_info.have_extension('ARB_color_buffer_float'):

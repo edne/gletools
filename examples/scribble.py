@@ -7,6 +7,7 @@ import pyglet.gl as gl
 
 
 class Matrix(object):
+
     @staticmethod
     def __enter__():
         gl.glPushMatrix()
@@ -17,6 +18,7 @@ class Matrix(object):
 
 
 class Group(object):
+
     def __init__(self, *members, **named_members):
         self.__dict__.update(named_members)
         self._members = list(members) + list(named_members.values())
@@ -35,7 +37,7 @@ window = pyglet.window.Window()
 projection = Projection(0, 0, window.width, window.height)
 fbo = Framebuffer(Texture(window.width, window.height,
                           data=[100, 100,
-                                100, 255]*(window.width*window.height)))
+                                100, 255] * (window.width * window.height)))
 
 
 def line(x0, y0, x1, y1):
@@ -51,7 +53,7 @@ def on_mouse_drag(x, y, rx, ry, button, modifier):
         gl.glColor4f(1, 1, 1, 1)
         gl.glLineWidth(3)
         with fbo:
-            line(x, y, x-rx, y-ry)
+            line(x, y, x - rx, y - ry)
 
 
 def interval(time):

@@ -5,7 +5,7 @@ import pyglet
 from gletools import (
     ShaderProgram, VertexShader, FragmentShader,
     Texture, Framebuffer, Sampler2D,
-    Projection, Screen, 
+    Projection, Screen,
 )
 from gletools.gl import *
 
@@ -51,6 +51,7 @@ depth = ShaderProgram(
 
 rotation = 0.0
 
+
 def quad(left, right, top, bottom):
     glBegin(GL_QUADS)
     glTexCoord2f(1.0, 1.0)
@@ -63,11 +64,13 @@ def quad(left, right, top, bottom):
     glVertex3f(left, top, 0.0)
     glEnd()
 
+
 def blur_geom():
-    glPushMatrix()    
+    glPushMatrix()
     glRotatef(90, 1.0, 0.0, 0.0)
     quad(left=-0.5, right=0.5, top=1, bottom=-1)
     glPopMatrix()
+
 
 def simulate(delta):
     global rotation
@@ -76,7 +79,8 @@ def simulate(delta):
 pyglet.clock.schedule_interval(simulate, 0.01)
 projection = Projection(0, 0, window.width, window.height)
 ortho = Screen(0, 0, window.width, window.height)
-    
+
+
 @window.event
 def on_draw():
     window.clear()
@@ -87,7 +91,8 @@ def on_draw():
         glRotatef(-45, 1, 0, 0)
         glRotatef(rotation, 0.0, 0.0, 1.0)
 
-        framebuffer.drawto(GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT)
+        framebuffer.drawto(
+            GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT)
         with framebuffer, depth:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
             glColor3f(0.0, 1.0, 0.0)

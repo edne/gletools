@@ -30,6 +30,7 @@ from random import random
 program.vars.seed_vector = [random() for _ in range(3)]
 rotation = 0.0
 
+
 def quad(min=0.0, max=1.0):
     glBegin(GL_QUADS)
     glTexCoord2f(1.0, 1.0)
@@ -42,19 +43,21 @@ def quad(min=0.0, max=1.0):
     glVertex3f(min, max, 0.0)
     glEnd()
 
+
 def simulate(delta, _):
     global rotation
     rotation += 40.0 * delta
 
 pyglet.clock.schedule(simulate, 0.03)
-    
+
+
 @window.event
 def on_draw():
     window.clear()
     program.vars.seed_vector = [random() for _ in range(3)]
     with framebuffer, program, screen:
         quad(0.0, texture.width)
-  
+
     with texture, projection:
         glPushMatrix()
         glTranslatef(0, 0, -3)
@@ -65,4 +68,3 @@ def on_draw():
 
 if __name__ == '__main__':
     pyglet.app.run()
-
