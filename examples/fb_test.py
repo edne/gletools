@@ -1,6 +1,7 @@
 import pyglet
-from gletools import Texture, Framebuffer
+from gletools import SimpleTexture, SimpleFramebuffer
 from gletools.gl import *
+from pyglet.image import Texture
 
 window = pyglet.window.Window()
 
@@ -15,10 +16,8 @@ def quad(min=0.0, max=1.0):
     glVertex3f(min, max, 0.0)
     glEnd()
 
-texture_old = Texture(64, 64)
-from pyglet.image import Texture
-# texture = Texture.create_for_size(GL_TEXTURE_2D, 64, 64)
-framebuffer = Framebuffer(texture_old)
+texture_old = SimpleTexture(64, 64)
+framebuffer = SimpleFramebuffer(texture_old.id)
 texture = Texture(64, 64, GL_TEXTURE_2D, texture_old.id)
 
 
