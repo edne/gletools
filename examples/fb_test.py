@@ -1,7 +1,6 @@
 import pyglet
-from gletools import SimpleTexture, SimpleFramebuffer
+from gletools import SimpleFramebuffer
 from gletools.gl import *
-from pyglet.image import Texture
 
 window = pyglet.window.Window()
 
@@ -16,18 +15,21 @@ def quad(min=0.0, max=1.0):
     glVertex3f(min, max, 0.0)
     glEnd()
 
-texture_old = SimpleTexture(64, 64)
-framebuffer = SimpleFramebuffer(texture_old.id)
-texture = Texture(64, 64, GL_TEXTURE_2D, texture_old.id)
+fb = SimpleFramebuffer(64, 64)
+fb2 = SimpleFramebuffer(64, 64)
 
 
 @window.event
 def on_draw():
     window.clear()
-    with framebuffer:
+    with fb:
         quad(0.0, 64)
 
-    texture.blit(0, 0, 0, window.width, window.height)
+    # fb.texture.blit(0, 0, 0, window.width, window.height)
+
+    with fb2:
+        fb.texture.blit(0, 0)
+    fb2.texture.blit(0, 0)
 
 
 if __name__ == '__main__':
