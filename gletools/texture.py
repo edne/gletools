@@ -3,39 +3,7 @@
 import gletools.gl as gl
 from ctypes import byref
 
-__all__ = ['SimpleTexture', 'Texture']
-
-
-class SimpleTexture():
-    def __init__(self, width, height):
-        id = self.id = gl.GLuint()
-        gl.glGenTextures(1, byref(id))
-
-        # TODO generate with pyglet
-
-        gl.glPushAttrib(gl.GL_ENABLE_BIT | gl.GL_TEXTURE_BIT)
-        gl.glActiveTexture(gl.GL_TEXTURE0)
-        gl.glEnable(gl.GL_TEXTURE_2D)
-
-        gl.glBindTexture(gl.GL_TEXTURE_2D, self.id)
-
-        gl.glTexParameteri(gl.GL_TEXTURE_2D,
-                           gl.GL_TEXTURE_MIN_FILTER,
-                           gl.GL_LINEAR)
-        gl.glTexParameteri(gl.GL_TEXTURE_2D,
-                           gl.GL_TEXTURE_MAG_FILTER,
-                           gl.GL_LINEAR)
-        gl.glTexImage2D(
-            gl.GL_TEXTURE_2D, 0, gl.GL_RGBA,
-            width, height,
-            0,
-            gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
-            (gl.GLubyte * (width*height * 4))(),
-        )
-        gl.glFlush()
-
-        gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
-        gl.glPopAttrib()
+__all__ = ['Texture']
 
 
 class Texture():
